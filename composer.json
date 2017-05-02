@@ -1,0 +1,15 @@
+{
+  "name": "burdapraha/oc_twig",
+  "type": "library",
+  "description": "Implementation of Twig template system for OpenCart 2.x",
+  "keywords": ["opencart", "twig", "template-system"],
+  "homepage": "http://burda.cz/cs/kariera/volna-mista#tester-koder",
+  "license": "MIT",
+  "require": {
+    "php": ">=5.4.0",
+    "twig/twig": "^2.3"
+  },
+  "autoload": {
+    "classmap": ["src"]
+  }
+}
