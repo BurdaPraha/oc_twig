@@ -6,9 +6,19 @@
     <author>Michal Landsman</author>
 
     <file path="system/engine/loader.php">
+
+        <operation info="Rename Native View Function">
+            <search>
+                <![CDATA[public function view($route, $data = array()) {]]>
+            </search>
+            <add position="replace">
+                <![CDATA[public function defaultView($route, $data = array()) {]]>
+            </add>
+        </operation>
+
         <operation info="Twig Render">
             <search position="before">
-                <![CDATA[public function view($route, $data = array()) {]]>
+                <![CDATA[public function defaultView($route, $data = array()) {]]>
             </search>
             <add position="before">
                 <![CDATA[
@@ -64,15 +74,6 @@
         return $output;
     }
 ]]>
-            </add>
-        </operation>
-
-        <operation info="Rename Native View Function">
-            <search index="1">
-                <![CDATA[public function view($route, $data = array()) {]]>
-            </search>
-            <add position="replace">
-                <![CDATA[public function defaultview($route, $data = array()) {]]>
             </add>
         </operation>
     </file>
