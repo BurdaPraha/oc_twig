@@ -8,7 +8,7 @@ namespace OC_Twig;
  * This class is used by Opencart as a twig extension and must not be used directly.
  *
  */
-class Extension extends Twig_Extension
+class Extension extends \Twig_Extension
 {
     protected $registry;
     protected $is_admin;

@@ -20,7 +20,7 @@ Inspired by existing but deprecated solution: [vanderson139/opencart-twig](vande
     } 
 ```
     
-It will move vqmod xml file to correct folder.
+It will move vqmod xml file to correct folder. If you are using another folder than "upload" for your document root, change these commands.
 
 4. add constant `define('TWIG_CACHE', true);` to your config.php, /admin/config.php
 5. optionally you can add row to your `.gitignore` file with path to tracy.xml (example: upload/vqmod/xml/twig.xml)
