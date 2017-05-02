@@ -12,7 +12,7 @@
             </search>
             <add position="before">
                 <![CDATA[
-    public function view($route, $data = array()) {
+    public function view($route, $data = array(), $twig = true) {
 
         if( ! $this->registry->get('twig')) {
 
