@@ -14,7 +14,7 @@ class Extension extends \Twig_Extension
     protected $is_admin;
 
     /**
-     * @param Registry $registry
+     * @param \Registry $registry
      */
     public function __construct(\Registry $registry) {
         $this->registry = $registry;
