@@ -24,54 +24,86 @@
                 <![CDATA[
     public function view($route, $data = array(), $twig = true) {
 
-        if( ! $this->registry->get('twig')) {
+        $output = null;
 
-            //Twig_Autoloader::register();
+		// Sanitize the call
+		$route = preg_replace('/[^a-zA-Z0-9_\/]/', '', (string)$route);
 
-            if(is_dir(DIR_TEMPLATE . $this->registry->get('config')->get('config_template') . '/template')) {
-                $paths[] = DIR_TEMPLATE . $this->registry->get('config')->get('config_template') . '/template';
+		// Trigger the pre events
+		$result = $this->registry->get('event')->trigger('view/' . $route . '/before', array(&$route, &$data, &$output));
+
+		if ($result) {
+			return $result;
+		}
+
+
+		if (!$output) {
+
+            if( ! $this->registry->get('twig')) {
+
+                $paths = array();
+
+                //Twig_Autoloader::register();
+
+                if(is_dir(DIR_TEMPLATE . $this->registry->get('config')->get('config_template') . '/template')) {
+                    $paths[] = DIR_TEMPLATE . $this->registry->get('config')->get('config_template') . '/template';
+                }
+
+
+
+                var_dump($this->registry->get('config')->get('template_type'));
+                die;
+
+                if(is_dir(DIR_TEMPLATE . 'default/template')) {
+                    $paths[] = DIR_TEMPLATE . 'default/template';
+                }
+
+                $paths[] = DIR_TEMPLATE;
+
+                $loader = new Twig_Loader_Chain(array(new Twig_Loader_Filesystem($paths), new Twig_Loader_Array(array())));
+
+                $cache = false;
+
+                if(defined('TWIG_CACHE')) {
+                    $cache = TWIG_CACHE;
+                }
+
+                $twig = new Twig_Environment($loader, array(
+                    'autoescape' => false,
+                    'cache' => $cache,
+                    'debug' => true
+                ));
+
+                $twig->addExtension(new Twig_Extension_Debug());
+                $twig->addExtension(new OC_Twig\Extension($this->registry));
+
+                $this->registry->set('twig', $twig);
             }
 
-            if(is_dir(DIR_TEMPLATE . 'default/template')) {
-                $paths[] = DIR_TEMPLATE . 'default/template';
-            }
+            extract($data);
+            ob_start();
 
-            $paths[] = DIR_TEMPLATE;
+            // First Step - Render Twig Native Templates
+            $output = $this->registry->get('twig')->render($route, $data);
 
-            $loader = new Twig_Loader_Chain(array(new Twig_Loader_Filesystem($paths), new Twig_Loader_Array(array())));
+            // Second Step - IF template has PHP Syntax, then execute
+            eval(' ?>' . $output);
 
-            $cache = false;
+            $output = ob_get_contents();
 
-            if(defined('TWIG_CACHE')) {
-                $cache = TWIG_CACHE;
-            }
+            ob_end_clean();
 
-            $twig = new Twig_Environment($loader, array(
-                'autoescape' => false,
-                'cache' => $cache,
-                'debug' => true
-            ));
+		}
 
-            $twig->addExtension(new Twig_Extension_Debug());
-            $twig->addExtension(new OC_Twig\Extension($this->registry));
+        // Trigger the post events
+		$result = $this->registry->get('event')->trigger('view/' . $route . '/after', array(&$route, &$data, &$output));
 
-            $this->registry->set('twig', $twig);
-        }
 
-        extract($data);
-        ob_start();
+		if ($result) {
+			return $result;
+		}
 
-        // First Step - Render Twig Native Templates
-        $output = $this->registry->get('twig')->render($route, $data);
-
-        // Second Step - IF template has PHP Syntax, then execute
-        eval(' ?>' . $output);
-
-        $output = ob_get_contents();
-
-        ob_end_clean();
-
-        return $output;
+		return $output;
     }
 ]]>
             </add>
